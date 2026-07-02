@@ -4,15 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>BulkMeter Pro</title>
-    <!-- Tailwind CSS Engine -->
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-    <!-- QuaggaJS Barcode Scanner Engine -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/quagga/0.12.1/quagga.min.js"></script>
     <style>
-        /* Smooth state transitions */
         .tab-content { display: none; }
         .tab-content.active { display: block; }
-        /* Interactive custom checking styling wrapper */
         .check-btn.checked {
             background-color: #10b981 !important;
             border-color: #10b981 !important;
@@ -22,7 +18,6 @@
 </head>
 <body class="bg-slate-900 text-slate-100 font-sans min-h-screen pb-24">
 
-    <!-- TOP HEADER -->
     <header class="bg-slate-950 border-b border-slate-800 p-4 sticky top-0 z-50 shadow-md">
         <div class="max-w-md mx-auto flex justify-between items-center">
             <div>
@@ -36,12 +31,9 @@
         </div>
     </header>
 
-    <!-- TAB CONTAINER CORES -->
     <main class="max-w-md mx-auto p-4 space-y-6">
         
-        <!-- ================== TAB 1: MACRO TRACKER ================== -->
         <div id="macro-tab" class="tab-content active space-y-6">
-            <!-- CALORIE SPEEDOMETER CARD -->
             <div class="bg-slate-950 border border-slate-800 rounded-3xl p-6 shadow-xl relative overflow-hidden">
                 <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-emerald-500 to-teal-400"></div>
                 <div class="flex justify-between items-center mb-4">
@@ -60,11 +52,9 @@
                 </div>
             </div>
 
-            <!-- MACRO BARS GRAPH PROGRESS CONTAINER -->
             <div class="bg-slate-950 border border-slate-800 rounded-3xl p-5 shadow-xl space-y-4">
                 <span class="text-xs font-bold text-slate-400 uppercase tracking-wider block">Target Macro Matrices</span>
                 
-                <!-- Protein Item Row -->
                 <div class="space-y-1.5">
                     <div class="flex justify-between text-xs font-semibold">
                         <span class="text-emerald-400 flex items-center gap-1">💪 Protein</span>
@@ -75,7 +65,6 @@
                     </div>
                 </div>
 
-                <!-- Carbs Item Row -->
                 <div class="space-y-1.5">
                     <div class="flex justify-between text-xs font-semibold">
                         <span class="text-amber-400 flex items-center gap-1">🌾 Carbohydrates</span>
@@ -86,7 +75,6 @@
                     </div>
                 </div>
 
-                <!-- Fats Item Row -->
                 <div class="space-y-1.5">
                     <div class="flex justify-between text-xs font-semibold">
                         <span class="text-rose-400 flex items-center gap-1">🥑 Dietary Fats</span>
@@ -98,9 +86,8 @@
                 </div>
             </div>
 
-            <!-- CAMERA SCANNER ACTION TOGGLES -->
             <div class="space-y-3">
-                <button id="toggleScanner" class="w-full bg-emerald-500 text-slate-950 font-black py-4 px-4 rounded-2xl tracking-wide uppercase text-xs shadow-lg shadow-emerald-500/10 active:scale-[0.99] transition-all cursor-pointer">
+                <button id="toggleScanner" class="w-full bg-emerald-500 text-slate-950 font-black py-4 px-4 rounded-2xl tracking-wide uppercase text-xs shadow-lg transition-all cursor-pointer">
                     Open Live Camera Scanner
                 </button>
                 
@@ -110,10 +97,15 @@
                 </div>
                 <p id="statusMessage" class="hidden text-center text-xs font-mono text-amber-400 bg-amber-500/10 py-2 px-3 rounded-lg border border-amber-500/20"></p>
                 <p id="scanNotice" class="hidden text-center text-xs font-bold text-emerald-400 bg-emerald-500/10 py-2 px-3 rounded-lg border border-emerald-500/20">✓ Item added automatically from OpenFoodFacts!</p>
+                
+                <div class="text-center">
+                    <button type="button" onclick="focusManualEntryForm()" class="text-xs text-slate-400 hover:text-emerald-400 underline decoration-slate-600 cursor-pointer py-1">
+                        Scan failed? Switch to Quick Manual Entry Form 📝
+                    </button>
+                </div>
             </div>
 
-            <!-- MANUAL ENTRY CONTROL FORM COMPONENT -->
-            <div class="bg-slate-950 border border-slate-800 rounded-3xl p-5 shadow-xl">
+            <div id="manualFormContainer" class="bg-slate-950 border border-slate-800 rounded-3xl p-5 shadow-xl transition-all duration-300">
                 <span class="text-xs font-bold text-slate-400 uppercase tracking-wider block mb-4">Manual Item Logger</span>
                 <form id="foodForm" class="space-y-4">
                     <div>
@@ -126,23 +118,22 @@
                             <input type="number" id="itemCalories" required placeholder="kcal" class="w-full bg-slate-900 border border-slate-800 text-white rounded-xl py-2.5 px-2 text-sm text-center focus:outline-none focus:border-emerald-500">
                         </div>
                         <div>
-                            <label class="block text-[10px] text-slate-400 font-bold uppercase tracking-wider mb-1">Protein (g)</label>
+                            <label class="block text-[10px] text-slate-400 font-bold uppercase tracking-wider mb-1">Protein</label>
                             <input type="number" id="itemProtein" required placeholder="g" class="w-full bg-slate-900 border border-slate-800 text-white rounded-xl py-2.5 px-2 text-sm text-center focus:outline-none focus:border-emerald-500">
                         </div>
                         <div>
-                            <label class="block text-[10px] text-slate-400 font-bold uppercase tracking-wider mb-1">Carbs (g)</label>
+                            <label class="block text-[10px] text-slate-400 font-bold uppercase tracking-wider mb-1">Carbs</label>
                             <input type="number" id="itemCarbs" required placeholder="g" class="w-full bg-slate-900 border border-slate-800 text-white rounded-xl py-2.5 px-2 text-sm text-center focus:outline-none focus:border-emerald-500">
                         </div>
                         <div>
-                            <label class="block text-[10px] text-slate-400 font-bold uppercase tracking-wider mb-1">Fats (g)</label>
+                            <label class="block text-[10px] text-slate-400 font-bold uppercase tracking-wider mb-1">Fats</label>
                             <input type="number" id="itemFats" required placeholder="g" class="w-full bg-slate-900 border border-slate-800 text-white rounded-xl py-2.5 px-2 text-sm text-center focus:outline-none focus:border-emerald-500">
                         </div>
                     </div>
-                    <button type="submit" class="w-full bg-slate-800 text-white font-bold py-3 px-4 rounded-xl text-xs hover:bg-slate-700 active:scale-[0.99] transition-all cursor-pointer">LOG FOOD ENTRY</button>
+                    <button type="submit" class="w-full bg-slate-800 text-white font-bold py-3 px-4 rounded-xl text-xs hover:bg-slate-700 transition-all cursor-pointer">LOG FOOD ENTRY</button>
                 </form>
             </div>
 
-            <!-- JOURNAL STREAM CHRONO FEED VIEW -->
             <div id="foodJournalList" class="space-y-2">
                 <span class="text-xs font-bold text-slate-400 uppercase tracking-wider block mb-1">Today's Consumption Feed</span>
                 <div id="emptyPrompt" class="text-center py-6 text-xs text-slate-500 border border-dashed border-slate-800 rounded-2xl">
@@ -151,47 +142,45 @@
             </div>
         </div>
 
-        <!-- ================== TAB 2: HEVY WORKOUT LOGGER ================== -->
         <div id="workout-tab" class="tab-content space-y-6">
-            <!-- ROUTINE SELECTOR DROPDOWN -->
             <div class="bg-slate-950 border border-slate-800 rounded-3xl p-5 shadow-xl">
-                <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Select Active Workout Plan</label>
+                <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Select Training Protocol</label>
                 <select id="routineSelect" class="w-full bg-slate-900 border border-slate-800 text-white rounded-xl py-3 px-3 text-sm font-bold focus:outline-none focus:border-blue-500">
-                    <option value="push">Routine A: Push Day (Chest/Triceps)</option>
-                    <option value="pull">Routine B: Pull Day (Back/Biceps)</option>
-                    <option value="legs">Routine C: Legs/Core Focus</option>
+                    <option value="day1">🔴 Day 1: Push Split (Chest/Shoulders/Triceps)</option>
+                    <option value="day2">🟢 Day 2: Pull Split (Back/Biceps)</option>
+                    <option value="day3">🔵 Day 3: Legs Split (Dumbbell Only)</option>
+                    <option value="day4">🟡 Day 4: Upper Body Power</option>
+                    <option value="day5">🟠 Day 5: Lower Power & Core</option>
+                    <option value="day6">⚪ Day 6: Full Rest & Growth Protocol</option>
+                    <option value="day7">🟤 Day 7: Active Recovery & Core</option>
                 </select>
             </div>
 
-            <!-- ACTIVE EXERCISE WORKING BLOCK SHEET -->
             <div class="space-y-4">
                 <div class="flex justify-between items-center">
-                    <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Active Exercise Set Sheet</span>
+                    <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Active Workout Sheet</span>
                     <button id="clearWorkoutBtn" class="text-[10px] bg-slate-800 text-slate-400 font-bold px-2.5 py-1 rounded-md hover:bg-red-500/20 hover:text-red-400 font-mono transition-all">RESET TRACKER</button>
                 </div>
                 
-                <!-- Exercises Injection point container -->
                 <div id="exercisesContainer" class="space-y-4"></div>
             </div>
         </div>
 
     </main>
 
-    <!-- FIXED NATIVE SYSTEM FOOTER NAVBAR TABS CONTROLS -->
     <nav class="fixed bottom-0 inset-x-0 bg-slate-950 border-t border-slate-800 py-2.5 px-6 shadow-2xl z-50">
         <div class="max-w-md mx-auto grid grid-cols-2 gap-4">
-            <button onclick="switchSystemTab('macro')" id="nav-macro" class="flex flex-col items-center justify-center text-emerald-400 font-bold gap-1 transition-all">
+            <button onclick="switchSystemTab('macro')" id="nav-macro" class="flex flex-col items-center justify-center text-emerald-400 font-bold gap-1">
                 <span class="text-xl">🥗</span>
                 <span class="text-[10px] uppercase tracking-wider font-bold">Macros Engine</span>
             </button>
-            <button onclick="switchSystemTab('workout')" id="nav-workout" class="flex flex-col items-center justify-center text-slate-500 font-medium gap-1 transition-all">
+            <button onclick="switchSystemTab('workout')" id="nav-workout" class="flex flex-col items-center justify-center text-slate-500 font-medium gap-1">
                 <span class="text-xl">🏋️‍♂️</span>
                 <span class="text-[10px] uppercase tracking-wider font-bold">Hevy Log</span>
             </button>
         </div>
     </nav>
 
-    <!-- RUNTIME LOGIC JAVASCRIPT ENGINES CORE -->
     <script>
         // TARGET CALORIE & MACRO LIMITS
         const CALORIE_TARGET = 2400;
@@ -199,31 +188,75 @@
         const CARBS_TARGET = 250;
         const FATS_TARGET = 70;
 
-        // PROGRAMMED WORKOUT ROUTINES OBJECT
+        // ALL 7 DAYS ENCODED ROUTINES
         const WORKOUT_ROUTINES = {
-            push: [
-                { id: "ex1", name: "Dumbbell Floor Press", tip: "Keep elbows tucked at a 45-degree angle to protect shoulders." },
-                { id: "ex2", name: "Cable Tricep Rope Pushdown", tip: "Lock your elbows to your ribcage. Flare the rope tips outwards at the bottom." }
+            day1: [
+                { id: "d1_h1", type: "lifting", sets: 4, name: "🏠 Dumbbell Floor Press", target: "8–10 reps", tip: "Keep elbows tucked at 45 degrees to optimize chest drive." },
+                { id: "d1_h2", type: "lifting", sets: 4, name: "🏠 Seated DB Shoulder Press", target: "8–10 reps", tip: "Avoid arching lower back. Push straight overhead." },
+                { id: "d1_h3", type: "lifting", sets: 4, name: "🏠 Dumbbell Lateral Raises", target: "12 reps", tip: "Lead with your elbows to isolate lateral deltoid fibers." },
+                { id: "d1_h4", type: "cardio", sets: 3, name: "🏠 Plank Holds", target: "60 seconds", tip: "Keep glutes and core fully squeezed tight." },
+                { id: "d1_g1", type: "lifting", sets: 4, name: "🏋️‍♂️ High-to-Low Cable Flyes", target: "12–15 reps", tip: "Squeeze lower chest intensely at the bottom crossover." },
+                { id: "d1_g2", type: "lifting", sets: 4, name: "🏋️‍♂️ Cable Tricep Rope Pushdowns", target: "12 reps", tip: "Flare the rope tips completely out at peak contraction. Drop-set final set." },
+                { id: "d1_g3", type: "lifting", sets: 3, name: "🏋️‍♂️ Cable Overhead Tricep Extension", target: "12 reps", tip: "Keep arms parallel to floor; stretch triceps at the back." },
+                { id: "d1_g4", type: "cardio", sets: 1, name: "🏋️‍♂️ Treadmill Incline Walk", target: "30 mins", tip: "Set parameters: 12% Incline @ 3.0 MPH. Do not hold the handrails." }
             ],
-            pull: [
-                { id: "ex3", name: "Cable Lat Pulldown", tip: "Pull with your elbows down toward your back pockets, puffing your chest out." },
-                { id: "ex4", name: "Dumbbell Bicep Curls", tip: "Control the lowering phase completely. Keep your body steady without swinging." }
+            day2: [
+                { id: "d2_h1", type: "lifting", sets: 4, name: "🏠 Dumbbell Bent-Over Rows", target: "8–10 reps", tip: "Hinge at hips, pull weights toward upper waistline." },
+                { id: "d2_h2", type: "lifting", sets: 3, name: "🏠 Single-Arm Dumbbell Rows", target: "10 reps/side", tip: "Drive elbow up high, isolating each side of the lat sheet." },
+                { id: "d2_h3", type: "lifting", sets: 4, name: "🏠 Dumbbell Bicep Curls", target: "10–12 reps", tip: "Supinate wrists at top of curl to squeeze bicep peaks." },
+                { id: "d2_h4", type: "lifting", sets: 3, name: "🏠 Dumbbell Russian Twists", target: "20 total reps", tip: "Rotate torso side to side under control." },
+                { id: "d2_g1", type: "lifting", sets: 4, name: "🏋️‍♂️ Cable Lat Pulldowns", target: "10–12 reps", tip: "Pull down toward back pockets; don't use momentum." },
+                { id: "d2_g2", type: "lifting", sets: 4, name: "🏋️‍♂️ Seated Cable Rows (Close Grip)", target: "12 reps", tip: "Puff chest out as you pull handle into lower sternum." },
+                { id: "d2_g3", type: "lifting", sets: 4, name: "🏋️‍♂️ Cable Face Pulls", target: "15 reps", tip: "Pull rope towards ears and separate hands to smash rear delts." },
+                { id: "d2_g4", type: "lifting", sets: 3, name: "🏋️‍♂️ Cable Bicep Straight-Bar Curls", target: "12–15 reps", tip: "Maintain tension at bottom; avoid swinging elbows forward." },
+                { id: "d2_g5", type: "cardio", sets: 1, name: "🏋️‍♂️ Treadmill Incline Walk", target: "30 mins", tip: "Set parameters: 10% Incline @ 3.2 MPH." }
             ],
-            legs: [
-                { id: "ex5", name: "Dumbbell Goblet Squat", tip: "Hold weight close to chest. Keep chest tall, push hips back, and lower down to parallel." },
-                { id: "ex6", name: "Standing Calf Raises", tip: "Pause at peak contraction for 1 full second; drive straight up through big toes." }
+            day3: [
+                { id: "d3_h1", type: "lifting", sets: 4, name: "🏠 Dumbbell Goblet Squats", target: "8–10 reps", tip: "Hold load tight to chest. Drop hips down to full parallel depth." },
+                { id: "d3_h2", type: "lifting", sets: 4, name: "🏠 Dumbbell Romanian Deadlifts (RDLs)", target: "10–12 reps", tip: "Push hips backward until hamstrings stretch; keep spine neutral." },
+                { id: "d3_h3", type: "lifting", sets: 3, name: "🏠 Dumbbell Walking Lunges", target: "12 steps total", tip: "Take controlled strides; maintain torso balance." },
+                { id: "d3_g1", type: "lifting", sets: 3, name: "🏋️‍♂️ DB Bulgarian Split Squats", target: "10 reps/leg", tip: "Elevate back leg on bench; drive weight straight up through front heel." },
+                { id: "d3_g2", type: "lifting", sets: 4, name: "🏋️‍♂️ Dumbbell Sumo Squats", target: "10–12 reps", tip: "Take wide stance with toes turned outward to target adductors/glutes." },
+                { id: "d3_g3", type: "lifting", sets: 4, name: "🏋️‍♂️ Dumbbell Calf Raises", target: "20 reps", tip: "Hold contraction at absolute peak extension for 1 full second." },
+                { id: "d3_g4", type: "cardio", sets: 1, name: "🏋️‍♂️ Treadmill Incline Walk", target: "30 mins", tip: "Set parameters: 12% Incline @ 2.8 MPH." }
+            ],
+            day4: [
+                { id: "d4_h1", type: "lifting", sets: 4, name: "🏠 Dumbbell Incline Bench Press", target: "8–10 reps", tip: "Target upper chest fibers. Control down tempo." },
+                { id: "d4_h2", type: "lifting", sets: 4, name: "🏠 Dumbbell Renegade Rows", target: "10 total reps", tip: "Hold static plank foundation; minimize hip sway while rowing." },
+                { id: "d4_h3", type: "lifting", sets: 3, name: "🏠 Dumbbell Arnold Press", target: "10 reps", tip: "Rotate palms out on path up; rotate back inward on way down." },
+                { id: "d4_h4", type: "lifting", sets: 3, name: "🏠 Dumbbell Hammer Curls", target: "12 reps", tip: "Keep palms facing inward to build brachialis width." },
+                { id: "d4_g1", type: "lifting", sets: 3, name: "🏋️‍♂️ Low-to-High Cable Flyes", target: "15 reps", tip: "Scoop cable hands upward together to isolate upper chest line." },
+                { id: "d4_g2", type: "lifting", sets: 3, name: "🏋️‍♂️ Single-Arm Cable Rows", target: "12 reps/side", tip: "Allows extended stretch on lat pullout phase." },
+                { id: "d4_g3", type: "lifting", sets: 3, name: "🏋️‍♂️ Cable Lateral Raises", target: "15 reps/arm", tip: "Provides constant mechanical tension through full motion arc." },
+                { id: "d4_g4", type: "cardio", sets: 1, name: "🏋️‍♂️ Treadmill Incline Walk", target: "30 mins", tip: "Set parameters: 10% Incline @ 3.2 MPH." }
+            ],
+            day5: [
+                { id: "d5_h1", type: "lifting", sets: 3, name: "🏠 Dumbbell Step-Ups", target: "10 reps/leg", tip: "Drive through lead leg on box; do not propel off back toe." },
+                { id: "d5_h2", type: "lifting", sets: 4, name: "🏠 Dumbbell Glute Bridges", target: "12 reps", tip: "Drive weight up through hips; squeeze glutes hard at peak elevation." },
+                { id: "d5_h3", type: "lifting", sets: 4, name: "🏠 Dumbbell Farmer’s Carry", target: "60 sec walks", tip: "Hold heaviest weights available; march with locked traps and core." },
+                { id: "d5_g1", type: "lifting", sets: 4, name: "🏋️‍♂️ Hanging Leg Raises", target: "12–15 reps", tip: "Control leg drop; bypass swinging movements to protect spine." },
+                { id: "d5_g2", type: "lifting", sets: 3, name: "🏋️‍♂️ Cable Woodchoppers", target: "12 reps/side", tip: "Rotate core horizontally against mechanical cable pull path." },
+                { id: "d5_g3", type: "cardio", sets: 1, name: "🏋️‍♂️ Treadmill Incline Intervals", target: "35 mins total", tip: "Protocol: Alternate 2 mins walk @ 15% incline / 1 min jog @ 2% incline." }
+            ],
+            day6: [
+                { id: "d6_rest", type: "rest", sets: 1, name: "🛌 Full Body Deep Mobility & Recovery", target: "20–30 mins", tip: "No lifting allowed. Focus heavily on full-body passive stretching or foam rolling to unlock muscle growth." }
+            ],
+            day7: [
+                { id: "d7_h1", type: "lifting", sets: 3, name: "🏠 Dumbbell Pull-Overs", target: "12 reps", tip: "Expand ribcage; stretch lat and serratus muscles overhead." },
+                { id: "d7_h2", type: "lifting", sets: 4, name: "🏠 Dumbbell Russian Twists", target: "20 total reps", tip: "Control rotation tracking from obliques." },
+                { id: "d7_h3", type: "lifting", sets: 3, name: "🏠 Dumbbell Plank Pull-Throughs", target: "10 reps/side", tip: "Maintain solid static base while dragging weight across underneath torso." },
+                { id: "d7_g1", type: "lifting", sets: 3, name: "🏋️‍♂️ Weighted Lying Leg Raises", target: "12 reps", tip: "Secure light dumbbell flat between feet for lower abdominal isolation." },
+                { id: "d7_g2", type: "lifting", sets: 3, name: "🏋️‍♂️ Dumbbell Suitcase Carries", target: "45 sec/side", tip: "Hold single heavy dumbbell on one side; offset load forces oblique brace." },
+                { id: "d7_g3", type: "cardio", sets: 1, name: "🏋️‍♂️ Treadmill Recovery Walk", target: "40 mins", tip: "Set parameters: Low impact, 0-2% Incline @ 3.0 MPH." }
             ]
         };
 
-        // GLOBAL APPLICATION SYSTEM MEMORY DATA STATE
+        // LOAD DATA PERSISTENCE MATRIX STATE
         let appState = JSON.parse(localStorage.getItem('bulkmeter_data')) || {
             consumedCalories: 0, consumedProtein: 0, consumedCarbs: 0, consumedFats: 0,
-            logs: [],
-            workoutWeights: {}, // Stores text inputs { setKey: value }
-            workoutChecks: {}   // Stores checked states { setKey: boolean }
+            logs: [], workoutWeights: {}, workoutChecks: {}
         };
 
-        // Core variables
         let isScanning = false;
         const toggleBtn = document.getElementById('toggleScanner');
         const scannerContainer = document.getElementById('scanner-container');
@@ -235,278 +268,11 @@
         const routineSelect = document.getElementById('routineSelect');
         const exercisesContainer = document.getElementById('exercisesContainer');
 
-        // APP INIT RUN
         updateAppState();
         renderJournalView();
         buildActiveWorkoutSheet();
 
-        // ====== SYSTEM TAB SWITCH NAVIGATION FLIPS ======
-        window.switchSystemTab = function(target) {
-            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
-            document.getElementById('nav-macro').className = "flex flex-col items-center justify-center text-slate-500 font-medium gap-1";
-            document.getElementById('nav-workout').className = "flex flex-col items-center justify-center text-slate-500 font-medium gap-1";
-
-            if (target === 'macro') {
-                document.getElementById('macro-tab').classList.add('active');
-                document.getElementById('nav-macro').className = "flex flex-col items-center justify-center text-emerald-400 font-bold gap-1";
-            } else if (target === 'workout') {
-                document.getElementById('workout-tab').classList.add('active');
-                document.getElementById('nav-workout').className = "flex flex-col items-center justify-center text-blue-400 font-bold gap-1";
-            }
-        };
-
-        // ====== HEVY WORKOUT CORE SHEETS GENERATION ======
-        routineSelect.addEventListener('change', buildActiveWorkoutSheet);
-        document.getElementById('clearWorkoutBtn').addEventListener('click', () => {
-            if(confirm("Reset all tracked weight sets/reps back to blank status values?")) {
-                appState.workoutWeights = {};
-                appState.workoutChecks = {};
-                saveStateToDisk();
-                buildActiveWorkoutSheet();
-            }
-        });
-
-        function buildActiveWorkoutSheet() {
-            const activeKey = routineSelect.value;
-            const exercises = WORKOUT_ROUTINES[activeKey];
-            exercisesContainer.innerHTML = "";
-
-            exercises.forEach((ex) => {
-                const exCard = document.createElement('div');
-                exCard.className = "bg-slate-950 border border-slate-800 rounded-3xl p-5 shadow-lg space-y-4";
-                
-                let setsHtml = "";
-                // Generate standard 3 working sets per exercise
-                for (let s = 1; s <= 3; s++) {
-                    const weightKey = `${ex.id}_s${s}_w`;
-                    const repsKey = `${ex.id}_s${s}_r`;
-                    const checkKey = `${ex.id}_s${s}_c`;
-
-                    const valW = appState.workoutWeights[weightKey] || "";
-                    const valR = appState.workoutWeights[repsKey] || "";
-                    const isChecked = appState.workoutChecks[checkKey] ? "checked" : "";
-
-                    setsHtml += `
-                        <div class="grid grid-cols-12 gap-2 items-center text-xs font-mono">
-                            <span class="col-span-2 font-bold text-slate-500 bg-slate-900/60 py-1.5 rounded-lg text-center border border-slate-800">${s}</span>
-                            <div class="col-span-4 flex items-center bg-slate-900 border border-slate-800 rounded-xl px-2">
-                                <input type="text" value="${valW}" oninput="logWorkoutValue('${weightKey}', this.value)" placeholder="--" class="w-full bg-transparent text-white text-center py-2 focus:outline-none text-sm font-bold">
-                                <span class="text-[10px] text-slate-500 font-sans font-bold">lbs</span>
-                            </div>
-                            <div class="col-span-4 flex items-center bg-slate-900 border border-slate-800 rounded-xl px-2">
-                                <input type="number" value="${valR}" oninput="logWorkoutValue('${repsKey}', this.value)" placeholder="--" class="w-full bg-transparent text-white text-center py-2 focus:outline-none text-sm font-bold">
-                                <span class="text-[10px] text-slate-500 font-sans font-bold">reps</span>
-                            </div>
-                            <button onclick="toggleSetCheckButton('${checkKey}', this)" class="check-btn ${isChecked} col-span-2 h-9 bg-slate-900 border border-slate-800 hover:border-emerald-500/50 rounded-xl font-bold flex items-center justify-center text-slate-400 transition-all cursor-pointer">✓</button>
-                        </div>
-                    `;
-                }
-
-                exCard.innerHTML = `
-                    <div>
-                        <h4 class="font-black text-white text-base tracking-tight">${ex.name}</h4>
-                        <p class="text-[11px] text-slate-400 italic font-medium leading-relaxed bg-slate-900/50 p-2 rounded-xl border border-slate-800/60 mt-1.5">💡 Form Tip: ${ex.tip}</p>
-                    </div>
-                    <div class="grid grid-cols-12 gap-2 text-[10px] uppercase font-bold tracking-wider text-slate-500 px-1 font-sans">
-                        <span class="col-span-2 text-center">Set</span>
-                        <span class="col-span-4 text-center">Weight</span>
-                        <span class="col-span-4 text-center">Reps</span>
-                        <span class="col-span-2 text-center">Done</span>
-                    </div>
-                    <div class="space-y-2.5">${setsHtml}</div>
-                `;
-                exercisesContainer.appendChild(exCard);
-            });
-        }
-
-        window.logWorkoutValue = function(key, val) {
-            appState.workoutWeights[key] = val;
-            saveStateToDisk();
-        };
-
-        window.toggleSetCheckButton = function(key, btnElem) {
-            if (btnElem.classList.contains('checked')) {
-                btnElem.classList.remove('checked');
-                appState.workoutChecks[key] = false;
-            } else {
-                btnElem.classList.add('checked');
-                appState.workoutChecks[key] = true;
-            }
-            saveStateToDisk();
-        };
-
-
-        // ====== MACRO BARCODE CAMERA SCANNER CONTROL MODULES ======
-        toggleBtn.addEventListener('click', () => {
-            if (isScanning) { stopScanner(); } else { startScanner(); }
-        });
-
-        function startScanner() {
-            scannerContainer.classList.remove('hidden');
-            statusMsg.classList.remove('hidden');
-            statusMsg.innerText = "Align product barcode line inside window view...";
-            toggleBtn.innerText = "STOP CAMERA";
-            toggleBtn.classList.replace('bg-emerald-500', 'bg-red-500');
-            isScanning = true;
-
-            Quagga.init({
-                inputStream: {
-                    name: "Live",
-                    type: "LiveStream",
-                    target: document.querySelector('#interactive'),
-                    constraints: { facingMode: "environment" }
-                },
-                decoder: {
-                    readers: ["ean_reader", "ean_8_reader", "upc_reader", "upc_e_reader", "code_128_reader"]
-                }
-            }, function (err) {
-                if (err) {
-                    console.error(err);
-                    statusMsg.innerText = "Camera setup failure! Use manual input controls.";
-                    stopScanner();
-                    return;
-                }
-                Quagga.start();
-            });
-        }
-
-        function stopScanner() {
-            Quagga.stop();
-            scannerContainer.classList.add('hidden');
-            statusMsg.classList.add('hidden');
-            toggleBtn.innerText = "OPEN LIVE CAMERA";
-            toggleBtn.classList.replace('bg-red-500', 'bg-emerald-500');
-            isScanning = false;
-        }
-
-        Quagga.onDetected((data) => {
-            if (data.codeResult && data.codeResult.code) {
-                const scannedCode = data.codeResult.code;
-                stopScanner();
-                queryOpenFoodFactsDatabase(scannedCode);
-            }
-        });
-
-        async function queryOpenFoodFactsDatabase(barcode) {
-            statusMsg.classList.remove('hidden');
-            statusMsg.innerText = `Searching global database for barcode: ${barcode}...`;
-            
-            try {
-                const response = await fetch(`https://world.openfoodfacts.org/api/v0/product/${barcode}.json`);
-                const resData = await response.json();
-
-                if (resData.status === 1) {
-                    const product = resData.product;
-                    statusMsg.classList.add('hidden');
-                    
-                    const brand = product.brands || '';
-                    const title = product.product_name || 'Unknown Item';
-                    document.getElementById('itemName').value = brand ? `${brand} - ${title}` : title;
-
-                    const nutriments = product.nutriments;
-                    document.getElementById('itemCalories').value = Math.round(nutriments['energy-kcal_value'] || nutriments['energy-kcal_100g'] || 0);
-                    document.getElementById('itemProtein').value = Math.round(nutriments.proteins_value || nutriments.proteins_100g || 0);
-                    document.getElementById('itemCarbs').value = Math.round(nutriments.carbohydrates_value || nutriments.carbohydrates_100g || 0);
-                    document.getElementById('itemFats').value = Math.round(nutriments.fat_value || nutriments.fat_100g || 0);
-                    
-                    scanNotice.classList.remove('hidden');
-                    setTimeout(() => scanNotice.classList.add('hidden'), 5000);
-                } else {
-                    statusMsg.innerText = "❌ Item not found in database! Enter macros manually.";
-                }
-            } catch (err) {
-                console.error(err);
-                statusMsg.innerText = "Server/Network communication timeout. Try again.";
-            }
-        }
-
-        // ====== JOURNAL LOGGER ENGINE ======
-        foodForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-
-            const entry = {
-                id: Date.now(),
-                name: document.getElementById('itemName').value,
-                calories: parseInt(document.getElementById('itemCalories').value) || 0,
-                protein: parseInt(document.getElementById('itemProtein').value) || 0,
-                carbs: parseInt(document.getElementById('itemCarbs').value) || 0,
-                fats: parseInt(document.getElementById('itemFats').value) || 0
-            };
-
-            appState.logs.push(entry);
-            updateAppState();
-            renderJournalView();
-            foodForm.reset();
-        });
-
-        function updateAppState() {
-            appState.consumedCalories = 0;
-            appState.consumedProtein = 0;
-            appState.consumedCarbs = 0;
-            appState.consumedFats = 0;
-
-            appState.logs.forEach(item => {
-                appState.consumedCalories += item.calories;
-                appState.consumedProtein += item.protein;
-                appState.consumedCarbs += item.carbs;
-                appState.consumedFats += item.fats;
-            });
-
-            saveStateToDisk();
-
-            // UI Layout syncs
-            document.getElementById('caloriesConsumed').innerText = appState.consumedCalories;
-            document.getElementById('caloriesRemaining').innerText = Math.max(0, CALORIE_TARGET - appState.consumedCalories);
-            
-            document.getElementById('proteinConsumed').innerText = appState.consumedProtein;
-            document.getElementById('carbsConsumed').innerText = appState.consumedCarbs;
-            document.getElementById('fatsConsumed').innerText = appState.consumedFats;
-
-            document.getElementById('proteinBar').style.width = `${Math.min(100, (appState.consumedProtein / PROTEIN_TARGET) * 100)}%`;
-            document.getElementById('carbsBar').style.width = `${Math.min(100, (appState.consumedCarbs / CARBS_TARGET) * 100)}%`;
-            document.getElementById('fatsBar').style.width = `${Math.min(100, (appState.consumedFats / FATS_TARGET) * 100)}%`;
-        }
-
-        function renderJournalView() {
-            const elements = journalList.querySelectorAll('.journal-entry-item');
-            elements.forEach(item => item.remove());
-
-            if (appState.logs.length === 0) {
-                emptyPrompt.classList.remove('hidden');
-                return;
-            } else {
-                emptyPrompt.classList.add('hidden');
-            }
-
-            appState.logs.slice().reverse().forEach(log => {
-                const node = document.createElement('div');
-                node.className = "journal-entry-item bg-slate-950 border border-slate-800 p-3 rounded-xl flex justify-between items-center text-xs";
-                node.innerHTML = `
-                    <div>
-                        <div class="font-bold text-white text-sm">${log.name}</div>
-                        <div class="text-slate-400 mt-0.5">P: <span class="text-emerald-400 font-semibold">${log.protein}g</span> | C: <span class="text-amber-400 font-semibold">${log.carbs}g</span> | F: <span class="text-rose-400 font-semibold">${log.fats}g</span></div>
-                    </div>
-                    <div class="flex items-center gap-3">
-                        <div class="text-right">
-                            <span class="font-black text-white text-sm">${log.calories}</span>
-                            <span class="text-[10px] text-slate-500 block uppercase font-bold">kcal</span>
-                        </div>
-                        <button onclick="removeLogEntryItem(${log.id})" class="text-slate-500 hover:text-red-400 font-bold p-1 cursor-pointer text-sm">✕</button>
-                    </div>
-                `;
-                journalList.appendChild(node);
-            });
-        }
-
-        window.removeLogEntryItem = function(id) {
-            appState.logs = appState.logs.filter(item => item.id !== id);
-            updateAppState();
-            renderJournalView();
-        };
-
-        function saveStateToDisk() {
-            localStorage.setItem('bulkmeter_data', JSON.stringify(appState));
-        }
-</script>
-</body>
-</html>
+        // ====== NEW: HOTKEY SHORTCUT FOR MANUAL LOGGING ======
+        window.focusManualEntryForm = function() {
+            if (isScanning) { stopScanner(); }
+            const container = document.getElementById('manualFormContainer');
