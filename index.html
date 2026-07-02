@@ -2,192 +2,341 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BulkMeter Pro - Ultimate Macro & Barcode Tracker</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>BulkMeter Pro</title>
+    <!-- Tailwind CSS Engine -->
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <!-- QuaggaJS Barcode Scanner Engine -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/quagga/0.12.1/quagga.min.js"></script>
     <style>
-        /* Camera viewfinder overlay configurations */
-        #interactive.viewport video {
-            width: 100%;
-            height: auto;
-            border-radius: 0.75rem;
-        }
-        #interactive.viewport {
-            position: relative;
-        }
-        /* Visual red scanning laser overlay */
-        .scanner-laser {
-            position: absolute;
-            top: 50%;
-            left: 5%;
-            width: 90%;
-            height: 2px;
-            background-color: #ef4444;
-            box-shadow: 0 0 8px #ef4444;
-            animation: scan 2s infinite ease-in-out;
-        }
-        @keyframes scan {
-            0% { top: 20%; }
-            50% { top: 80%; }
-            100% { top: 20%; }
+        /* Smooth state transitions */
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        /* Interactive custom checking styling wrapper */
+        .check-btn.checked {
+            background-color: #10b981 !important;
+            border-color: #10b981 !important;
+            color: #ffffff !important;
         }
     </style>
 </head>
-<body class="bg-slate-950 text-slate-100 font-sans min-h-screen">
+<body class="bg-slate-900 text-slate-100 font-sans min-h-screen pb-24">
 
-    <nav class="bg-slate-900 border-b border-slate-800 p-4 sticky top-0 z-50 shadow-md">
-        <div class="max-w-4xl mx-auto flex justify-between items-center">
-            <h1 class="text-xl font-black tracking-tight text-emerald-400">📊 BULKMETER <span class="text-xs text-white font-normal bg-emerald-600 px-2 py-0.5 rounded-md ml-1">PRO</span></h1>
-            <span class="text-xs bg-slate-800 text-slate-400 px-3 py-1 rounded-full border border-slate-700">Scanner Integrated</span>
+    <!-- TOP HEADER -->
+    <header class="bg-slate-950 border-b border-slate-800 p-4 sticky top-0 z-50 shadow-md">
+        <div class="max-w-md mx-auto flex justify-between items-center">
+            <div>
+                <h1 class="text-xl font-black tracking-tight text-emerald-400">BULKMETER <span class="text-white text-xs px-2 py-0.5 bg-slate-800 rounded-md ml-1 font-mono uppercase tracking-widest">PRO</span></h1>
+                <p class="text-[10px] text-slate-400 tracking-wider font-semibold uppercase mt-0.5">Lean Bulk Analytics & Logging</p>
+            </div>
+            <div class="text-right">
+                <span class="text-xs text-slate-500 block font-mono">STREAK</span>
+                <span class="text-sm font-black text-white">🔥 14 Days</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- TAB CONTAINER CORES -->
+    <main class="max-w-md mx-auto p-4 space-y-6">
+        
+        <!-- ================== TAB 1: MACRO TRACKER ================== -->
+        <div id="macro-tab" class="tab-content active space-y-6">
+            <!-- CALORIE SPEEDOMETER CARD -->
+            <div class="bg-slate-950 border border-slate-800 rounded-3xl p-6 shadow-xl relative overflow-hidden">
+                <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-emerald-500 to-teal-400"></div>
+                <div class="flex justify-between items-center mb-4">
+                    <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Calorie Intake Engine</span>
+                    <span class="text-xs font-mono text-slate-500">Target: 2400 kcal</span>
+                </div>
+                <div class="grid grid-cols-2 gap-4 items-center">
+                    <div>
+                        <span id="caloriesConsumed" class="text-5xl font-black text-white tracking-tighter block">0</span>
+                        <span class="text-[10px] text-slate-400 font-bold uppercase tracking-wide">Consumed kcal</span>
+                    </div>
+                    <div class="text-right border-l border-slate-800 pl-4">
+                        <span id="caloriesRemaining" class="text-3xl font-black text-emerald-400 tracking-tight block">2400</span>
+                        <span class="text-[10px] text-slate-400 font-bold uppercase tracking-wide block">Remaining kcal</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- MACRO BARS GRAPH PROGRESS CONTAINER -->
+            <div class="bg-slate-950 border border-slate-800 rounded-3xl p-5 shadow-xl space-y-4">
+                <span class="text-xs font-bold text-slate-400 uppercase tracking-wider block">Target Macro Matrices</span>
+                
+                <!-- Protein Item Row -->
+                <div class="space-y-1.5">
+                    <div class="flex justify-between text-xs font-semibold">
+                        <span class="text-emerald-400 flex items-center gap-1">💪 Protein</span>
+                        <span class="text-slate-300"><span id="proteinConsumed" class="font-bold text-white">0</span> / 170g</span>
+                    </div>
+                    <div class="w-full bg-slate-800 h-2.5 rounded-full overflow-hidden">
+                        <div id="proteinBar" class="bg-emerald-500 h-full rounded-full transition-all duration-500" style="width: 0%"></div>
+                    </div>
+                </div>
+
+                <!-- Carbs Item Row -->
+                <div class="space-y-1.5">
+                    <div class="flex justify-between text-xs font-semibold">
+                        <span class="text-amber-400 flex items-center gap-1">🌾 Carbohydrates</span>
+                        <span class="text-slate-300"><span id="carbsConsumed" class="font-bold text-white">0</span> / 250g</span>
+                    </div>
+                    <div class="w-full bg-slate-800 h-2.5 rounded-full overflow-hidden">
+                        <div id="carbsBar" class="bg-amber-500 h-full rounded-full transition-all duration-500" style="width: 0%"></div>
+                    </div>
+                </div>
+
+                <!-- Fats Item Row -->
+                <div class="space-y-1.5">
+                    <div class="flex justify-between text-xs font-semibold">
+                        <span class="text-rose-400 flex items-center gap-1">🥑 Dietary Fats</span>
+                        <span class="text-slate-300"><span id="fatsConsumed" class="font-bold text-white">0</span> / 70g</span>
+                    </div>
+                    <div class="w-full bg-slate-800 h-2.5 rounded-full overflow-hidden">
+                        <div id="fatsBar" class="bg-rose-500 h-full rounded-full transition-all duration-500" style="width: 0%"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CAMERA SCANNER ACTION TOGGLES -->
+            <div class="space-y-3">
+                <button id="toggleScanner" class="w-full bg-emerald-500 text-slate-950 font-black py-4 px-4 rounded-2xl tracking-wide uppercase text-xs shadow-lg shadow-emerald-500/10 active:scale-[0.99] transition-all cursor-pointer">
+                    Open Live Camera Scanner
+                </button>
+                
+                <div id="scanner-container" class="hidden relative w-full aspect-video bg-black rounded-2xl overflow-hidden border-2 border-emerald-500/30 shadow-inner">
+                    <div id="interactive" class="w-full h-full object-cover"></div>
+                    <div class="absolute inset-x-4 top-1/2 h-0.5 bg-red-500 shadow-[0_0_8px_#ef4444] animate-pulse"></div>
+                </div>
+                <p id="statusMessage" class="hidden text-center text-xs font-mono text-amber-400 bg-amber-500/10 py-2 px-3 rounded-lg border border-amber-500/20"></p>
+                <p id="scanNotice" class="hidden text-center text-xs font-bold text-emerald-400 bg-emerald-500/10 py-2 px-3 rounded-lg border border-emerald-500/20">✓ Item added automatically from OpenFoodFacts!</p>
+            </div>
+
+            <!-- MANUAL ENTRY CONTROL FORM COMPONENT -->
+            <div class="bg-slate-950 border border-slate-800 rounded-3xl p-5 shadow-xl">
+                <span class="text-xs font-bold text-slate-400 uppercase tracking-wider block mb-4">Manual Item Logger</span>
+                <form id="foodForm" class="space-y-4">
+                    <div>
+                        <label class="block text-[10px] text-slate-400 font-bold uppercase tracking-wider mb-1">Food Name or Brand</label>
+                        <input type="text" id="itemName" required placeholder="e.g., Greek Yogurt, Oats, Chicken" class="w-full bg-slate-900 border border-slate-800 text-white rounded-xl py-2.5 px-3 text-sm focus:outline-none focus:border-emerald-500">
+                    </div>
+                    <div class="grid grid-cols-4 gap-2">
+                        <div>
+                            <label class="block text-[10px] text-slate-400 font-bold uppercase tracking-wider mb-1">Calories</label>
+                            <input type="number" id="itemCalories" required placeholder="kcal" class="w-full bg-slate-900 border border-slate-800 text-white rounded-xl py-2.5 px-2 text-sm text-center focus:outline-none focus:border-emerald-500">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] text-slate-400 font-bold uppercase tracking-wider mb-1">Protein (g)</label>
+                            <input type="number" id="itemProtein" required placeholder="g" class="w-full bg-slate-900 border border-slate-800 text-white rounded-xl py-2.5 px-2 text-sm text-center focus:outline-none focus:border-emerald-500">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] text-slate-400 font-bold uppercase tracking-wider mb-1">Carbs (g)</label>
+                            <input type="number" id="itemCarbs" required placeholder="g" class="w-full bg-slate-900 border border-slate-800 text-white rounded-xl py-2.5 px-2 text-sm text-center focus:outline-none focus:border-emerald-500">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] text-slate-400 font-bold uppercase tracking-wider mb-1">Fats (g)</label>
+                            <input type="number" id="itemFats" required placeholder="g" class="w-full bg-slate-900 border border-slate-800 text-white rounded-xl py-2.5 px-2 text-sm text-center focus:outline-none focus:border-emerald-500">
+                        </div>
+                    </div>
+                    <button type="submit" class="w-full bg-slate-800 text-white font-bold py-3 px-4 rounded-xl text-xs hover:bg-slate-700 active:scale-[0.99] transition-all cursor-pointer">LOG FOOD ENTRY</button>
+                </form>
+            </div>
+
+            <!-- JOURNAL STREAM CHRONO FEED VIEW -->
+            <div id="foodJournalList" class="space-y-2">
+                <span class="text-xs font-bold text-slate-400 uppercase tracking-wider block mb-1">Today's Consumption Feed</span>
+                <div id="emptyPrompt" class="text-center py-6 text-xs text-slate-500 border border-dashed border-slate-800 rounded-2xl">
+                    No food logs cataloged today yet.
+                </div>
+            </div>
+        </div>
+
+        <!-- ================== TAB 2: HEVY WORKOUT LOGGER ================== -->
+        <div id="workout-tab" class="tab-content space-y-6">
+            <!-- ROUTINE SELECTOR DROPDOWN -->
+            <div class="bg-slate-950 border border-slate-800 rounded-3xl p-5 shadow-xl">
+                <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Select Active Workout Plan</label>
+                <select id="routineSelect" class="w-full bg-slate-900 border border-slate-800 text-white rounded-xl py-3 px-3 text-sm font-bold focus:outline-none focus:border-blue-500">
+                    <option value="push">Routine A: Push Day (Chest/Triceps)</option>
+                    <option value="pull">Routine B: Pull Day (Back/Biceps)</option>
+                    <option value="legs">Routine C: Legs/Core Focus</option>
+                </select>
+            </div>
+
+            <!-- ACTIVE EXERCISE WORKING BLOCK SHEET -->
+            <div class="space-y-4">
+                <div class="flex justify-between items-center">
+                    <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Active Exercise Set Sheet</span>
+                    <button id="clearWorkoutBtn" class="text-[10px] bg-slate-800 text-slate-400 font-bold px-2.5 py-1 rounded-md hover:bg-red-500/20 hover:text-red-400 font-mono transition-all">RESET TRACKER</button>
+                </div>
+                
+                <!-- Exercises Injection point container -->
+                <div id="exercisesContainer" class="space-y-4"></div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- FIXED NATIVE SYSTEM FOOTER NAVBAR TABS CONTROLS -->
+    <nav class="fixed bottom-0 inset-x-0 bg-slate-950 border-t border-slate-800 py-2.5 px-6 shadow-2xl z-50">
+        <div class="max-w-md mx-auto grid grid-cols-2 gap-4">
+            <button onclick="switchSystemTab('macro')" id="nav-macro" class="flex flex-col items-center justify-center text-emerald-400 font-bold gap-1 transition-all">
+                <span class="text-xl">🥗</span>
+                <span class="text-[10px] uppercase tracking-wider font-bold">Macros Engine</span>
+            </button>
+            <button onclick="switchSystemTab('workout')" id="nav-workout" class="flex flex-col items-center justify-center text-slate-500 font-medium gap-1 transition-all">
+                <span class="text-xl">🏋️‍♂️</span>
+                <span class="text-[10px] uppercase tracking-wider font-bold">Hevy Log</span>
+            </button>
         </div>
     </nav>
 
-    <main class="max-w-4xl mx-auto p-4 space-y-6">
-
-        <div class="bg-slate-900 rounded-2xl border border-slate-800 p-6 shadow-xl grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
-            
-            <div class="text-center md:border-r md:border-slate-800 py-2">
-                <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400">Calories Remaining</h3>
-                <div id="caloriesRemaining" class="text-4xl font-black text-white mt-2">2400</div>
-                <p class="text-xs text-slate-500 mt-1"><span id="caloriesConsumed">0</span> / <span id="calorieTarget">2400</span> kcal</p>
-            </div>
-
-            <div class="col-span-2 space-y-3">
-                <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">Daily Macro Progress</h3>
-                
-                <div>
-                    <div class="flex justify-between text-xs font-semibold mb-1">
-                        <span class="text-emerald-400">Protein</span>
-                        <span><span id="proteinConsumed">0</span>g / 170g</span>
-                    </div>
-                    <div class="w-full bg-slate-800 rounded-full h-2.5 overflow-hidden">
-                        <div id="proteinBar" class="bg-emerald-500 h-2.5 transition-all duration-500" style="width: 0%"></div>
-                    </div>
-                </div>
-
-                <div>
-                    <div class="flex justify-between text-xs font-semibold mb-1">
-                        <span class="text-amber-400">Carbohydrates</span>
-                        <span><span id="carbsConsumed">0</span>g / 250g</span>
-                    </div>
-                    <div class="w-full bg-slate-800 rounded-full h-2.5 overflow-hidden">
-                        <div id="carbsBar" class="bg-amber-500 h-2.5 transition-all duration-500" style="width: 0%"></div>
-                    </div>
-                </div>
-
-                <div>
-                    <div class="flex justify-between text-xs font-semibold mb-1">
-                        <span class="text-rose-400">Fats</span>
-                        <span><span id="fatsConsumed">0</span>g / 70g</span>
-                    </div>
-                    <div class="w-full bg-slate-800 rounded-full h-2.5 overflow-hidden">
-                        <div id="fatsBar" class="bg-rose-500 h-2.5 transition-all duration-500" style="width: 0%"></div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            
-            <div class="space-y-4">
-                
-                <div class="bg-slate-900 border border-slate-800 p-4 rounded-2xl shadow-md space-y-3">
-                    <div class="flex justify-between items-center">
-                        <h3 class="text-sm font-bold text-slate-300 flex items-center gap-2">
-                            <span class="w-2 h-2 rounded-full bg-red-500 animate-pulse"></span> Intelligent Barcode Scanner
-                        </h3>
-                        <button id="toggleScanner" class="bg-emerald-500 hover:bg-emerald-600 text-slate-950 text-xs font-black py-1.5 px-3 rounded-lg cursor-pointer transition-all">
-                            OPEN LIVE CAMERA
-                        </button>
-                    </div>
-
-                    <div id="scanner-container" class="hidden relative overflow-hidden bg-black rounded-xl border border-slate-700 aspect-video flex items-center justify-center">
-                        <div id="interactive" class="viewport w-full h-full"></div>
-                        <div class="scanner-laser"></div>
-                    </div>
-                    
-                    <div id="statusMessage" class="text-xs text-center text-slate-400 hidden bg-slate-950 p-2 rounded-lg border border-slate-800">Ready to scan...</div>
-                </div>
-
-                <div class="bg-slate-900 border border-slate-800 p-5 rounded-2xl shadow-lg space-y-4">
-                    <h2 class="text-sm font-bold text-slate-200 border-b border-slate-800 pb-2 flex items-center justify-between">
-                        <span>📝 Food Entry Parameters</span>
-                        <span id="scanNotice" class="text-[10px] bg-emerald-950 border border-emerald-800/80 text-emerald-400 font-bold px-2 py-0.5 rounded hidden">SCAN APPLIED</span>
-                    </h2>
-                    
-                    <form id="foodForm" class="space-y-3">
-                        <div>
-                            <label class="block text-xs font-bold text-slate-400 mb-1 uppercase">Food Description / Brand</label>
-                            <input type="text" id="itemName" required placeholder="e.g., Protein Granola, Chicken Drumstick" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-emerald-500 text-slate-200">
-                        </div>
-                        <div class="grid grid-cols-2 gap-2">
-                            <div>
-                                <label class="block text-xs font-bold text-slate-400 mb-1 uppercase">Calories (kcal)</label>
-                                <input type="number" id="itemCalories" required placeholder="0" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-emerald-500 text-slate-200">
-                            </div>
-                            <div>
-                                <label class="block text-xs font-bold text-slate-400 mb-1 uppercase">Protein (g)</label>
-                                <input type="number" id="itemProtein" required placeholder="0" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-emerald-500 text-slate-200">
-                            </div>
-                        </div>
-                        <div class="grid grid-cols-2 gap-2">
-                            <div>
-                                <label class="block text-xs font-bold text-slate-400 mb-1 uppercase">Carbs (g)</label>
-                                <input type="number" id="itemCarbs" required placeholder="0" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-emerald-500 text-slate-200">
-                            </div>
-                            <div>
-                                <label class="block text-xs font-bold text-slate-400 mb-1 uppercase">Fats (g)</label>
-                                <input type="number" id="itemFats" required placeholder="0" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-emerald-500 text-slate-200">
-                            </div>
-                        </div>
-                        <button type="submit" class="w-full bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-black text-sm py-2.5 rounded-xl mt-2 cursor-pointer transition-all">
-                            LOG MEAL ENTRY
-                        </button>
-                    </form>
-                </div>
-            </div>
-
-            <div class="bg-slate-900 border border-slate-800 p-5 rounded-2xl shadow-lg flex flex-col justify-between h-fit min-h-[400px]">
-                <div>
-                    <h2 class="text-md font-bold text-slate-200 border-b border-slate-800 pb-2 mb-3">
-                        📋 Today's Food Diary Journal
-                    </h2>
-                    <div id="foodJournalList" class="space-y-2 overflow-y-auto max-h-[420px] pr-1">
-                        <p id="emptyPrompt" class="text-xs text-slate-500 text-center py-16">Your diary is empty. Scan a barcode or type values to start logging items!</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </main>
-
+    <!-- RUNTIME LOGIC JAVASCRIPT ENGINES CORE -->
     <script>
-        // Core macro metrics targets configurations
+        // TARGET CALORIE & MACRO LIMITS
         const CALORIE_TARGET = 2400;
         const PROTEIN_TARGET = 170;
         const CARBS_TARGET = 250;
         const FATS_TARGET = 70;
 
-        // Reactive Application state storage tracking properties matrix
-        let appState = {
-            consumedCalories: 0,
-            consumedProtein: 0,
-            consumedCarbs: 0,
-            consumedFats: 0,
-            logs: []
+        // PROGRAMMED WORKOUT ROUTINES OBJECT
+        const WORKOUT_ROUTINES = {
+            push: [
+                { id: "ex1", name: "Dumbbell Floor Press", tip: "Keep elbows tucked at a 45-degree angle to protect shoulders." },
+                { id: "ex2", name: "Cable Tricep Rope Pushdown", tip: "Lock your elbows to your ribcage. Flare the rope tips outwards at the bottom." }
+            ],
+            pull: [
+                { id: "ex3", name: "Cable Lat Pulldown", tip: "Pull with your elbows down toward your back pockets, puffing your chest out." },
+                { id: "ex4", name: "Dumbbell Bicep Curls", tip: "Control the lowering phase completely. Keep your body steady without swinging." }
+            ],
+            legs: [
+                { id: "ex5", name: "Dumbbell Goblet Squat", tip: "Hold weight close to chest. Keep chest tall, push hips back, and lower down to parallel." },
+                { id: "ex6", name: "Standing Calf Raises", tip: "Pause at peak contraction for 1 full second; drive straight up through big toes." }
+            ]
         };
 
+        // GLOBAL APPLICATION SYSTEM MEMORY DATA STATE
+        let appState = JSON.parse(localStorage.getItem('bulkmeter_data')) || {
+            consumedCalories: 0, consumedProtein: 0, consumedCarbs: 0, consumedFats: 0,
+            logs: [],
+            workoutWeights: {}, // Stores text inputs { setKey: value }
+            workoutChecks: {}   // Stores checked states { setKey: boolean }
+        };
+
+        // Core variables
         let isScanning = false;
         const toggleBtn = document.getElementById('toggleScanner');
         const scannerContainer = document.getElementById('scanner-container');
         const statusMsg = document.getElementById('statusMessage');
         const scanNotice = document.getElementById('scanNotice');
-        
         const foodForm = document.getElementById('foodForm');
         const journalList = document.getElementById('foodJournalList');
         const emptyPrompt = document.getElementById('emptyPrompt');
+        const routineSelect = document.getElementById('routineSelect');
+        const exercisesContainer = document.getElementById('exercisesContainer');
 
-        // ====== BARCODE CAMERA SCANNER CONTROL MODULES ======
+        // APP INIT RUN
+        updateAppState();
+        renderJournalView();
+        buildActiveWorkoutSheet();
+
+        // ====== SYSTEM TAB SWITCH NAVIGATION FLIPS ======
+        window.switchSystemTab = function(target) {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            document.getElementById('nav-macro').className = "flex flex-col items-center justify-center text-slate-500 font-medium gap-1";
+            document.getElementById('nav-workout').className = "flex flex-col items-center justify-center text-slate-500 font-medium gap-1";
+
+            if (target === 'macro') {
+                document.getElementById('macro-tab').classList.add('active');
+                document.getElementById('nav-macro').className = "flex flex-col items-center justify-center text-emerald-400 font-bold gap-1";
+            } else if (target === 'workout') {
+                document.getElementById('workout-tab').classList.add('active');
+                document.getElementById('nav-workout').className = "flex flex-col items-center justify-center text-blue-400 font-bold gap-1";
+            }
+        };
+
+        // ====== HEVY WORKOUT CORE SHEETS GENERATION ======
+        routineSelect.addEventListener('change', buildActiveWorkoutSheet);
+        document.getElementById('clearWorkoutBtn').addEventListener('click', () => {
+            if(confirm("Reset all tracked weight sets/reps back to blank status values?")) {
+                appState.workoutWeights = {};
+                appState.workoutChecks = {};
+                saveStateToDisk();
+                buildActiveWorkoutSheet();
+            }
+        });
+
+        function buildActiveWorkoutSheet() {
+            const activeKey = routineSelect.value;
+            const exercises = WORKOUT_ROUTINES[activeKey];
+            exercisesContainer.innerHTML = "";
+
+            exercises.forEach((ex) => {
+                const exCard = document.createElement('div');
+                exCard.className = "bg-slate-950 border border-slate-800 rounded-3xl p-5 shadow-lg space-y-4";
+                
+                let setsHtml = "";
+                // Generate standard 3 working sets per exercise
+                for (let s = 1; s <= 3; s++) {
+                    const weightKey = `${ex.id}_s${s}_w`;
+                    const repsKey = `${ex.id}_s${s}_r`;
+                    const checkKey = `${ex.id}_s${s}_c`;
+
+                    const valW = appState.workoutWeights[weightKey] || "";
+                    const valR = appState.workoutWeights[repsKey] || "";
+                    const isChecked = appState.workoutChecks[checkKey] ? "checked" : "";
+
+                    setsHtml += `
+                        <div class="grid grid-cols-12 gap-2 items-center text-xs font-mono">
+                            <span class="col-span-2 font-bold text-slate-500 bg-slate-900/60 py-1.5 rounded-lg text-center border border-slate-800">${s}</span>
+                            <div class="col-span-4 flex items-center bg-slate-900 border border-slate-800 rounded-xl px-2">
+                                <input type="text" value="${valW}" oninput="logWorkoutValue('${weightKey}', this.value)" placeholder="--" class="w-full bg-transparent text-white text-center py-2 focus:outline-none text-sm font-bold">
+                                <span class="text-[10px] text-slate-500 font-sans font-bold">lbs</span>
+                            </div>
+                            <div class="col-span-4 flex items-center bg-slate-900 border border-slate-800 rounded-xl px-2">
+                                <input type="number" value="${valR}" oninput="logWorkoutValue('${repsKey}', this.value)" placeholder="--" class="w-full bg-transparent text-white text-center py-2 focus:outline-none text-sm font-bold">
+                                <span class="text-[10px] text-slate-500 font-sans font-bold">reps</span>
+                            </div>
+                            <button onclick="toggleSetCheckButton('${checkKey}', this)" class="check-btn ${isChecked} col-span-2 h-9 bg-slate-900 border border-slate-800 hover:border-emerald-500/50 rounded-xl font-bold flex items-center justify-center text-slate-400 transition-all cursor-pointer">✓</button>
+                        </div>
+                    `;
+                }
+
+                exCard.innerHTML = `
+                    <div>
+                        <h4 class="font-black text-white text-base tracking-tight">${ex.name}</h4>
+                        <p class="text-[11px] text-slate-400 italic font-medium leading-relaxed bg-slate-900/50 p-2 rounded-xl border border-slate-800/60 mt-1.5">💡 Form Tip: ${ex.tip}</p>
+                    </div>
+                    <div class="grid grid-cols-12 gap-2 text-[10px] uppercase font-bold tracking-wider text-slate-500 px-1 font-sans">
+                        <span class="col-span-2 text-center">Set</span>
+                        <span class="col-span-4 text-center">Weight</span>
+                        <span class="col-span-4 text-center">Reps</span>
+                        <span class="col-span-2 text-center">Done</span>
+                    </div>
+                    <div class="space-y-2.5">${setsHtml}</div>
+                `;
+                exercisesContainer.appendChild(exCard);
+            });
+        }
+
+        window.logWorkoutValue = function(key, val) {
+            appState.workoutWeights[key] = val;
+            saveStateToDisk();
+        };
+
+        window.toggleSetCheckButton = function(key, btnElem) {
+            if (btnElem.classList.contains('checked')) {
+                btnElem.classList.remove('checked');
+                appState.workoutChecks[key] = false;
+            } else {
+                btnElem.classList.add('checked');
+                appState.workoutChecks[key] = true;
+            }
+            saveStateToDisk();
+        };
+
+
+        // ====== MACRO BARCODE CAMERA SCANNER CONTROL MODULES ======
         toggleBtn.addEventListener('click', () => {
             if (isScanning) { stopScanner(); } else { startScanner(); }
         });
@@ -195,7 +344,7 @@
         function startScanner() {
             scannerContainer.classList.remove('hidden');
             statusMsg.classList.remove('hidden');
-            statusMsg.innerText = "Align product barcode line inside window window view...";
+            statusMsg.innerText = "Align product barcode line inside window view...";
             toggleBtn.innerText = "STOP CAMERA";
             toggleBtn.classList.replace('bg-emerald-500', 'bg-red-500');
             isScanning = true;
@@ -230,7 +379,6 @@
             isScanning = false;
         }
 
-        // Global watcher loop detecting valid barcode triggers
         Quagga.onDetected((data) => {
             if (data.codeResult && data.codeResult.code) {
                 const scannedCode = data.codeResult.code;
@@ -239,7 +387,6 @@
             }
         });
 
-        // Async API gateway engine matching barcodes to open repositories
         async function queryOpenFoodFactsDatabase(barcode) {
             statusMsg.classList.remove('hidden');
             statusMsg.innerText = `Searching global database for barcode: ${barcode}...`;
@@ -252,7 +399,6 @@
                     const product = resData.product;
                     statusMsg.classList.add('hidden');
                     
-                    // Map out properties strings structures values matrices
                     const brand = product.brands || '';
                     const title = product.product_name || 'Unknown Item';
                     document.getElementById('itemName').value = brand ? `${brand} - ${title}` : title;
@@ -263,7 +409,6 @@
                     document.getElementById('itemCarbs').value = Math.round(nutriments.carbohydrates_value || nutriments.carbohydrates_100g || 0);
                     document.getElementById('itemFats').value = Math.round(nutriments.fat_value || nutriments.fat_100g || 0);
                     
-                    // Flash notification update feedback indicators UI elements
                     scanNotice.classList.remove('hidden');
                     setTimeout(() => scanNotice.classList.add('hidden'), 5000);
                 } else {
@@ -275,7 +420,7 @@
             }
         }
 
-        // ====== CORE JOURNAL LOGGER CALCULATIONS ENGINE MODULES ======
+        // ====== JOURNAL LOGGER ENGINE ======
         foodForm.addEventListener('submit', (e) => {
             e.preventDefault();
 
@@ -307,7 +452,9 @@
                 appState.consumedFats += item.fats;
             });
 
-            // Update numerical inner texts targets UI strings elements values panels
+            saveStateToDisk();
+
+            // UI Layout syncs
             document.getElementById('caloriesConsumed').innerText = appState.consumedCalories;
             document.getElementById('caloriesRemaining').innerText = Math.max(0, CALORIE_TARGET - appState.consumedCalories);
             
@@ -315,14 +462,12 @@
             document.getElementById('carbsConsumed').innerText = appState.consumedCarbs;
             document.getElementById('fatsConsumed').innerText = appState.consumedFats;
 
-            // Compute slider width translation transforms arrays allocations properties
             document.getElementById('proteinBar').style.width = `${Math.min(100, (appState.consumedProtein / PROTEIN_TARGET) * 100)}%`;
             document.getElementById('carbsBar').style.width = `${Math.min(100, (appState.consumedCarbs / CARBS_TARGET) * 100)}%`;
             document.getElementById('fatsBar').style.width = `${Math.min(100, (appState.consumedFats / FATS_TARGET) * 100)}%`;
         }
 
         function renderJournalView() {
-            // Flush lists layout elements targets trees dynamically
             const elements = journalList.querySelectorAll('.journal-entry-item');
             elements.forEach(item => item.remove());
 
@@ -333,10 +478,9 @@
                 emptyPrompt.classList.add('hidden');
             }
 
-            // Map loop across list indices matrix items reversed array configurations
             appState.logs.slice().reverse().forEach(log => {
                 const node = document.createElement('div');
-                node.className = "journal-entry-item bg-slate-950 border border-slate-800 p-3 rounded-xl flex justify-between items-center text-xs animation-all";
+                node.className = "journal-entry-item bg-slate-950 border border-slate-800 p-3 rounded-xl flex justify-between items-center text-xs";
                 node.innerHTML = `
                     <div>
                         <div class="font-bold text-white text-sm">${log.name}</div>
@@ -359,6 +503,10 @@
             updateAppState();
             renderJournalView();
         };
-    </script>
+
+        function saveStateToDisk() {
+            localStorage.setItem('bulkmeter_data', JSON.stringify(appState));
+        }
+</script>
 </body>
 </html>
